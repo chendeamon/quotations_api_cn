@@ -6,7 +6,7 @@ Sky.io平台API中文文档
 
 # baseUrl
 
-* baseUrl:https://www.sky.io/original/
+* baseUrl:https://www.sky.io/unique/
 
 * 其他平台需要先进行邮件申请，并开通接口，之后才会开发程序化接口API
 
@@ -177,7 +177,7 @@ rsa_private_key.pem
 rsa_public_key.pem
 ```
 
-2.然后，将您的public-key（也就是rsa_public_key.pem）、用户名、用户uid发送到**business-cn@sky.io**，进行申请。
+2.然后，将您的public-key（也就是rsa_public_key.pem）、用户名、用户uid发送到**business@sky.io**，进行申请。
 3.每次申请调用登录、下单、撤单等接口API权限的时候，请您使用sha256算法并通过私钥将参数签名，我在这里给出一个Javascript的实现。
 4.timestamp为最新时间
 
