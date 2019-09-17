@@ -6,17 +6,17 @@ Sky.io平台API中文文档
 
 # baseUrl
 
-* baseUrl:https://www.sky.io/unique/
+* baseUrl:https://www.sky.io/original/
 
 * 其他平台需要先进行邮件申请，并开通接口，之后才会开发程序化接口API
 
 # 查询
 
-开发者可用通过查询接口获取到币种交易对、实时行情、交易深度、交易历史等信息。目前，查询功能不需要登录认证并传递token，如果以后查询的请求压力增大可用考虑增加token，并限制每日查询次数。
+开发者可用通过查询接口获取到币种交易对、实时行情、交易深度、交易历史等信息。
 
 ## 获取币种交易对
 
-* request_url：baseUrl + coin/allCurrencyRelations
+* request_url：baseUrl + coin/allMoneyRelations
 * method：GET
 * parameter：null
 * response_data:
@@ -24,10 +24,8 @@ Sky.io平台API中文文档
 item|description|type
 --------|--------|--------
 id|编号|int
-baseCurrencyId|基础币id|int
 baseCurrencyName|基础币名称|string
 baseCurrencyNameEn|基础币英文名称|string
-tradeCurrencyId|交易币id|int
 tradeCurrencyName|交易币名称|string
 tradeCurrencyNameEn|交易币英文名称|string
 
@@ -39,8 +37,6 @@ tradeCurrencyNameEn|交易币英文名称|string
     "attachment": [
     {
     "id": 1,
-    "baseCurrencyId": "1",
-        "tradeCurrencyId": "4",
         "baseCurrencyName": "比特币",
         "baseCurrencyNameEn": "BTC",
         "tradeCurrencyName": "蝶恋币",
@@ -48,8 +44,6 @@ tradeCurrencyNameEn|交易币英文名称|string
     },
     {
     "id": 2,
-    "baseCurrencyId": "1",
-        "tradeCurrencyId": "2",
         "baseCurrencyName": "比特币",
         "baseCurrencyNameEn": "BTC",
         "tradeCurrencyName": "莱特币",
@@ -57,8 +51,6 @@ tradeCurrencyNameEn|交易币英文名称|string
     },
     {
     "id": 3,
-    "baseCurrencyId": "3",
-        "tradeCurrencyId": "4",
         "baseCurrencyName": "以太坊",
         "baseCurrencyNameEn": "ETH",
         "tradeCurrencyName": "蝶恋币",
@@ -72,14 +64,13 @@ tradeCurrencyNameEn|交易币英文名称|string
 
 ## 获取实时行情
 
-* request_url：baseUrl + quote/realTime
+* request_url：baseUrl + quote/currentTimeSymbol
 * method：GET
 * parameter：
 
 item|description|type
 --------|--------|--------
-baseCurrencyId|基础币id|string
-tradeCurrencyId|交易币id|string
+symbol|交易对|string
 
 * response_data:
 
@@ -91,8 +82,6 @@ last|最新成交价|decimal
 low|最低价|decimal
 sell|卖一价|decimal
 vol|交易币名称|decimal
-currencyId|交易币id|int
-baseCurrencyId|基础币id|int
 
 * response description：当接口返回的status 为200时，则attachment包含以下数据，如果status参数不为200 ，则出现异常。
 * example：
@@ -105,9 +94,7 @@ baseCurrencyId|基础币id|int
     "last": 0.0174565,
     "low": 0.01646356,
     "sell": 0.0174565,
-    "vol": 391.896,
-    "currencyId": 2,
-    "baseCurrencyId": 1
+    "vol": 391.896
     },
     "message": "",
     "status": 200
@@ -117,14 +104,13 @@ baseCurrencyId|基础币id|int
 
 ## 获取交易深度
 
-* request_url：baseUrl + quote/tradeDeepin
+* request_url：baseUrl + quote/dealDeepinSymbol
 * method：GET
 * parameter：
 
 item|description|type
 --------|--------|--------
-baseCurrencyId|基础币id|string
-tradeCurrencyId|交易币id|string
+symbol|交易对|string
 limit|获得的深度的档数|int
 
 * response_data:
@@ -160,54 +146,7 @@ bids|买方委托单数组|Array
 }
 ```
 
-## 获取交易历史
 
-* request_url：baseUrl + quote/tradeHistory
-* method：GET
-* parameter：
-
-item|description|type
---------|--------|--------
-baseCurrencyId|基础币id|string
-tradeCurrencyId|交易币id|string
-limit|获得的深度的档数|int
-
-* response_data:
-
-item|description|type
---------|--------|--------
-date|交易时间|string
-price|交易价格|decimal
-amount|交易金额|decimal
-number|交易数量|decimal
-coinCode|交易币id|int
-baseCurrencyId|基础币id|int
-tid|订单号|string
-type|交易类型，值为buy，或者sell|string
-buyOrSellTrade|交易类型id，1是buy，2是sell|int
-
-* response description：当接口返回的status 为200时，则attachment包含以下数据，如果status参数不为200 ，则出现异常。
-* example：
-
-```json
-{
-    "attachment": [
-        {
-    "date": "1524561232806",
-    "price": 0.0174565,
-    "amount": 0.00002618,
-    "number": 0.0015,
-    "coinCode": 2,
-    "baseCurrencyId": 1,
-    "tid": "15245612328058682391221000295251",
-    "type": "sell",
-    "buyOrSellTrade": 2
-        }
-    ],
-    "message": "",
-    "status": 200
-}
-```
 
 # 权限申请
 
@@ -257,70 +196,13 @@ console.log(signature.sign(APISECRET, 'hex'));
 ```
 
 
->登录时采用用户/密码/签名的方式获取token，在使用下单、撤单、委托单查询等功能时，直接通过token进行。
-
-
-# 登录
-
-开发者通过登录接口获取平台token。只有获得了平台token之后，才能操作委托下单和委托撤单等功能。
-
-## 描述
-
-* request_url：baseUrl + user/signLogin
-* method：POST
-* Content-Type:application/x-www-form-urlencoded
-* Accept:application/json, text/plain, */*
-* parameter：
-
-item|description|type
---------|--------|--------
-email|平台登录名|string
-pwd|平台登录密码|string
-timestamp|时间戳|string
-sign|签名|string
-
-## 前端密码加密规则
-
-```javascript
-const salt = 'dig?F*ckDang5PaSsWOrd&%(12lian0160630).'
-let pwd = md5(pwd + salt)
-```
-
-* response_data:
-
-返回值在data.attachment中，其中开发者需要的值有：
-
-item|description|type
---------|--------|--------
-token|操作请求token|string
-uid|用户id|int
-uname|用户姓名，目前为空|string
-isShow|是否展示高级选项，0是不可以，1是可以|int
-
-* response description：当接口返回的status 为200时，则attachment包含以下数据，如果status参数不为200 ，则出现异常。
-
-```json
-{
-    "attachment": {
-        "uid": ****,
-        "token": "************************",
-        "point": null,
-        "uname": null,
-        "isShow": 0
-    },
-    "message": null,
-    "status": 200
-}
-```
-
-
 # 委托下单
 
 通过调用该接口，可以使用平台的生成委托单功能，该功能可以生成限价买单和限价卖单
 
 ## 描述
 
-* request_url：baseUrl + order/order
+* request_url：baseUrl + order/indentSymbol
 * method：POST
 * Content-Type:application/x-www-form-urlencoded
 * Accept:application/json, text/plain, */*
@@ -329,17 +211,16 @@ isShow|是否展示高级选项，0是不可以，1是可以|int
 item|description|type
 --------|--------|--------
 buyOrSell|买卖方向，1是buy，2是sell|int
-currencyId|交易币种|int
-baseCurrencyId|基础币种|int
+symbol|交易对|string
 fdPassword|交易密码,可以为空|string
 num|数量，保留小数点后最多8位小数|decimal
 price|价格，保留小数点后最多8位小数|decimal
 source|程序化交易对接类型，该值目前为5|int
 type|交易类型，该值目前为1|int
-token|请求认证，如果token过期后需要重新获取|string
-uid|用户id|int
 local|语种，繁体中文,可选zh_TW、en|string
 timestamp|时间戳|string
+sign|签名|string
+identify|用户标识|string
 
 * response description：当接口返回的status 为200时，则attachment包含以下数据，如果status参数不为200 ，则出现异常。
 
@@ -364,7 +245,7 @@ attachment|单号|string
 
 ## 描述
 
-* request_url：baseUrl + order/cancel
+* request_url：baseUrl + order/callOff
 * method：POST
 * Content-Type:application/x-www-form-urlencoded
 * Accept:application/json, text/plain, */*
@@ -372,14 +253,13 @@ attachment|单号|string
 
 item|description|type
 --------|--------|--------
-currencyId|基础币种id|int
 orderNo|委托单号|string
 fdPassword|交易密码|string
 source|程序化交易对接类型，该值目前为1|int
-token|请求认证，如果token过期后需要重新获取|string
-uid|用户id|int
 local|语种，繁体中文,可选zh_TW、en|string
 timestamp|时间戳|string
+sign|签名|string
+identify|用户标识|string
 
 * response description：当接口返回的status 为200时，则attachment包含以下数据，如果status参数不为200 ，则出现异常。
 
@@ -393,13 +273,14 @@ timestamp|时间戳|string
 }
 ```
 
+
 # 账户资产查询
 
 平台为用户提供账户资产查询功能。
 
 ## 描述
 
-* request_url：baseUrl + coin/customerCoinAccount
+* request_url：baseUrl + coin/customerCurrencyAccount
 * method：POST
 * Content-Type:application/x-www-form-urlencoded
 * Accept:application/json, text/plain, */*
@@ -407,10 +288,10 @@ timestamp|时间戳|string
 
 item|description|type
 --------|--------|--------
-token|请求认证，如果token过期后需要重新获取|string
-uid|用户id|int
 local|语种，繁体中文,可选zh_TW、en|string
 timestamp|时间戳|string
+sign|签名|string
+identify|用户标识|string
 
 * response description：当接口返回的status 为200时，则attachment包含以下数据，如果status参数不为200 ，则出现异常。
 
@@ -426,10 +307,8 @@ coinList的内容
 item|description|type
 --------|--------|--------
 amount|持仓数量|decimal
-baseCurrencyId|基础币id|int
 btc_value|大约折合多少BTC|int
 cashAmount|现金价值|decimal
-currencyId|交易币id|int
 currencyName|数字货币全称|string
 currencyNameEn|数字货币简称|string
 freezeAmount|冻结数量|decimal
@@ -448,8 +327,6 @@ icoUrl|币种缩略图|string
 			"currencyName": "Litecoin",
 			"cashAmount": "100.00000000",
 			"icoUrl": "bestex/ltc.png",
-			"baseCurrencyId": 2,
-			"currencyId": 2,
 			"btc_value": 10.0
 		}, {
 			"currencyNameEn": "BTC",
@@ -458,8 +335,6 @@ icoUrl|币种缩略图|string
 			"currencyName": "BitCoin",
 			"cashAmount": "1.00000000",
 			"icoUrl": "bestex/btc.png",
-			"baseCurrencyId": 1,
-			"currencyId": 1,
 			"btc_value": 1.0
 		}, {
 			"currencyNameEn": "ETH",
@@ -468,8 +343,6 @@ icoUrl|币种缩略图|string
 			"currencyName": "Ethereum",
 			"cashAmount": "0.00000000",
 			"icoUrl": "bestex/eth.png",
-			"baseCurrencyId": 3,
-			"currencyId": 3,
 			"btc_value": 0.0
 		}, {
 			"currencyNameEn": "BCH",
@@ -478,8 +351,6 @@ icoUrl|币种缩略图|string
 			"currencyName": "Bitcoin Cash",
 			"cashAmount": "0.00000000",
 			"icoUrl": "bestex/bch.png",
-			"baseCurrencyId": 14,
-			"currencyId": 14,
 			"btc_value": 0.0
 		}, {
 			"currencyNameEn": "ETC",
@@ -488,8 +359,6 @@ icoUrl|币种缩略图|string
 			"currencyName": "Ethereum Classic",
 			"cashAmount": "0.00000000",
 			"icoUrl": "coinimg/etc.png",
-			"baseCurrencyId": 15,
-			"currencyId": 15,
 			"btc_value": 0.0
 		}, {
 			"currencyNameEn": "BEB",
@@ -498,8 +367,6 @@ icoUrl|币种缩略图|string
 			"currencyName": "Be best",
 			"cashAmount": "0.00000000",
 			"icoUrl": "bestex/beb.png",
-			"baseCurrencyId": 23,
-			"currencyId": 23,
 			"btc_value": 0.0
 		}]
 	},
@@ -514,7 +381,7 @@ icoUrl|币种缩略图|string
 
 ## 描述
 
-* request_url：baseUrl + user/trOrderListByCustomer
+* request_url：baseUrl + user/indentListByCustomerSymbol
 * method：POST
 * Content-Type:application/x-www-form-urlencoded
 * Accept:application/json, text/plain, */*
@@ -528,13 +395,12 @@ start|查询起点，默认为1，最大为999|int
 size|查询数量|int
 status|委托单状态，未成交=0、部分成交=1、全部成交=2、撤单=4、全部状态=10|int
 buyOrSell|买卖方向，0是全部方向，1是buy，2是sell|int
-currencyId|交易币种id|int
-baseCurrencyId|基础币种id|int
+symbol|交易对|string
 priceType|价格类型，默认为0，表示保留0位小数|
-token|请求认证，如果token过期后需要重新获取|string
-uid|用户id|int
-local|语种，繁体中文,可选zh_TW、en|string
 timestamp|时间戳|string
+sign|签名|string
+identify|用户标识|string
+local|语种，繁体中文,可选zh_TW、en|string
 
 * response description：当接口返回的status 为200时，则attachment包含以下数据，如果status参数不为200 ，则出现异常。
 
@@ -550,7 +416,6 @@ list的内容
 item|description|type
 --------|--------|--------
 averagePrice|平均委托金额|decimal
-baseCurrencyId|基础币id|int
 baseCurrencyName|基础币名称|string
 baseCurrencyNameEn|基础币简称|string
 buyOrSell|买卖方向，0是全部方向，1是buy，2是sell|int
@@ -579,7 +444,6 @@ tradeNum|成交数量|decimal
                 "fee": "0.00000000",
                 "num": "0.01000000",
                 "tradeNum": "0.00000000",
-                "baseCurrencyId": 1,
                 "baseCurrencyName": "BitCoin",
                 "baseCurrencyNameEn": "BTC",
                 "buyOrSell": 1,
@@ -597,7 +461,6 @@ tradeNum|成交数量|decimal
                 "fee": "0.00000000",
                 "num": "0.01000000",
                 "tradeNum": "0.00000000",
-                "baseCurrencyId": 1,
                 "baseCurrencyName": "BitCoin",
                 "baseCurrencyNameEn": "BTC",
                 "buyOrSell": 1,
@@ -615,7 +478,6 @@ tradeNum|成交数量|decimal
                 "fee": "0.00000000",
                 "num": "0.01000000",
                 "tradeNum": "0.00000000",
-                "baseCurrencyId": 1,
                 "baseCurrencyName": "BitCoin",
                 "baseCurrencyNameEn": "BTC",
                 "buyOrSell": 1,
@@ -633,7 +495,6 @@ tradeNum|成交数量|decimal
                 "fee": "0.00000000",
                 "num": "0.01000000",
                 "tradeNum": "0.00000000",
-                "baseCurrencyId": 1,
                 "baseCurrencyName": "BitCoin",
                 "baseCurrencyNameEn": "BTC",
                 "buyOrSell": 1,
@@ -651,7 +512,6 @@ tradeNum|成交数量|decimal
                 "fee": "0.00000000",
                 "num": "1.00000000",
                 "tradeNum": "0.00000000",
-                "baseCurrencyId": 1,
                 "baseCurrencyName": "BitCoin",
                 "baseCurrencyNameEn": "BTC",
                 "buyOrSell": 2,
@@ -660,6 +520,163 @@ tradeNum|成交数量|decimal
                 "price": "1.00000000",
                 "averagePrice": "0.00000000",
                 "status": 4
+            }
+        ]
+    },
+    "message": null,
+    "status": 200
+}
+```
+
+## 获取交易历史
+
+* request_url：baseUrl + user/trOrderListByCustomerSymbol/v2
+* method：GET
+* parameter：
+
+item|description|type
+--------|--------|--------
+symbol|交易对|string
+type|市价限价标识|int
+buyOrSell|买卖标识|int
+status|状态|int
+beginTime|开始时间|string
+endTime|结束时间|string
+local|语言|string
+priceType|排序|int
+start|分页查询条数|int
+size|每页条数|int
+uuid|用户uuid|string
+timestamp|时间戳|string
+sign|签名|string
+identify|用户标识|string
+
+* response_data:
+
+item|description|type
+--------|--------|--------
+total|总条数|int
+list|数据列表|object
+
+list的内容
+
+item|description|type
+--------|--------|--------
+buyOrSell|买卖标识|int
+averagePrice|平均价|decimal
+fee|手续费|decimal
+num|数量|decimal
+price|价格|decimal
+orderTime|下单时间|string
+status|状态|int
+tradeNum|成效数量|decimal
+remainNum|剩余数量|decimal
+baseCurrencyName|基础币名称|string
+baseCurrencyNameEn|基础币简称|string
+currencyName|交易币名称|string
+currencyNameEn|交易币简称|string
+dealAmount|成交金额|decimal
+orderNo|订单号|string
+type|市价限价标识|int
+
+
+* response description：当接口返回的status 为200时，则attachment包含以下数据，如果status参数不为200 ，则出现异常。
+* example：
+
+```json
+{
+    "attachment": {
+        "total": 5,
+        "list": [
+            {
+                "currencyNameEn": "LTC",
+                "remainNum": "0.00000000",
+                "orderNo": "15247224350040050010351100223505",
+                "dealAmount": "0.00000000",
+                "fee": "0.00000000",
+                "num": "0.01000000",
+                "tradeNum": "0.00000000",
+                "baseCurrencyName": "BitCoin",
+                "baseCurrencyNameEn": "BTC",
+                "buyOrSell": 1,
+                "orderTime": "2018-04-26 14:00:35",
+                "currencyName": "Litecoin",
+                "price": "10.00000000",
+                "averagePrice": "0.00000000",
+                "status": 4,
+                "type":1
+            },
+            {
+                "currencyNameEn": "LTC",
+                "remainNum": "0.00000000",
+                "orderNo": "15247207813130040010351100299823",
+                "dealAmount": "0.00000000",
+                "fee": "0.00000000",
+                "num": "0.01000000",
+                "tradeNum": "0.00000000",
+                "baseCurrencyName": "BitCoin",
+                "baseCurrencyNameEn": "BTC",
+                "buyOrSell": 1,
+                "orderTime": "2018-04-26 13:33:01",
+                "currencyName": "Litecoin",
+                "price": "10.00000000",
+                "averagePrice": "0.00000000",
+                "status": 4,
+                "type":1
+            },
+            {
+                "currencyNameEn": "LTC",
+                "remainNum": "0.00000000",
+                "orderNo": "15247205636080030010341100261823",
+                "dealAmount": "0.00000000",
+                "fee": "0.00000000",
+                "num": "0.01000000",
+                "tradeNum": "0.00000000",
+                "baseCurrencyName": "BitCoin",
+                "baseCurrencyNameEn": "BTC",
+                "buyOrSell": 1,
+                "orderTime": "2018-04-26 13:29:23",
+                "currencyName": "Litecoin",
+                "price": "1.00000000",
+                "averagePrice": "0.00000000",
+                "status": 4,
+                "type":1
+            },
+            {
+                "currencyNameEn": "LTC",
+                "remainNum": "0.00000000",
+                "orderNo": "15247205330170020010341100292977",
+                "dealAmount": "0.00000000",
+                "fee": "0.00000000",
+                "num": "0.01000000",
+                "tradeNum": "0.00000000",
+                "baseCurrencyName": "BitCoin",
+                "baseCurrencyNameEn": "BTC",
+                "buyOrSell": 1,
+                "orderTime": "2018-04-26 13:28:53",
+                "currencyName": "Litecoin",
+                "price": "1.00000000",
+                "averagePrice": "0.00000000",
+                "status": 4,
+                "type":1
+            },
+            {
+                "currencyNameEn": "LTC",
+                "remainNum": "0.00000000",
+                "orderNo": "15247205167340010010381100231945",
+                "dealAmount": "0.00000000",
+                "fee": "0.00000000",
+                "num": "1.00000000",
+                "tradeNum": "0.00000000",
+                "baseCurrencyName": "BitCoin",
+                "baseCurrencyNameEn": "BTC",
+                "buyOrSell": 2,
+                "orderTime": "2018-04-26 13:28:36",
+                "currencyName": "Litecoin",
+                "price": "1.00000000",
+                "averagePrice": "0.00000000",
+                "status": 4,
+                "type":1
             }
         ]
     },
